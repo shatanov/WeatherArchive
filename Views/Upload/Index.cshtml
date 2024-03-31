@@ -1,0 +1,24 @@
+﻿@{
+	  ViewData["Title"] = "Upload Files";
+}
+
+<h2>Upload Files</h2>
+
+<form method="post" enctype="multipart/form-data" action="/Upload/Upload">
+	<div class="form-group">
+		<label for="files">Choose files to upload:</label>
+		<input type="file" id="files" name="files" multiple class="form-control-file">
+	</div>
+	<button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+  @if (Model != null && Model.Count > 0)
+	{
+		<h4>The following files failed to upload:</h4>
+		<ul>
+			@foreach (var failedFile in Model)
+			{
+				<li>@failedFile</li>
+			}
+		</ul>
+	}

@@ -1,0 +1,89 @@
+﻿@model IEnumerable<WeatherArchive.Models.WeatherData>
+
+<div class="container">
+    <h1>Weather Archive</h1>
+
+    <form asp-controller="WeatherData" asp-action="Index" method="get">
+        <div class="form-group">
+            <label for="year">Year:</label>
+            <input type="number" class="form-control" id="year" name="year" value="@ViewBag.Year">
+        </div>
+        <div class="form-group">
+            <label for="month">Month:</label>
+            <input type="number" class="form-control" id="month" name="month" value="@ViewBag.Month">
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    @if (Model.Any())
+    {
+	    <table class="table">
+		    <thead>
+		    <tr>
+			    <th>Дата</th>
+			    <th>Температура воздуха</th>
+			    <th>Th, влажность, %</th>
+			    <th>Td, точка росы</th>
+			    <th>Направление ветра</th>
+			    <th>Скорость ветра, м/с</th>
+			    <th>Облачность, %</th>
+			    <th>h, нижняя граница облачности</th>
+			    <th>VV, горизонтальная видимость, км</th>
+			    <th>Погодные явления</th>
+		    </tr>
+		    </thead>
+		    <tbody>
+		    @foreach (var item in Model)
+		    {
+			    <tr>
+				    <td>@(item.DateTime.HasValue ? item.DateTime.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : '-')</td>
+				    <td>@(item.Temperature ?? '-')</td>
+				    <td>@(item.Humidity ?? '-')</td>
+				    <td>@(item.DewPoint ?? '-')</td>
+				    <td>@(item.WindDirection is {Length: > 0 } ? item.WindDirection : '-')</td>
+				    <td>@(item.WindSpeed ?? '-')</td>
+				    <td>@(item.Cloudiness ?? '-')</td>
+				    <td>@(item.CloudinessLower ?? '-')</td>
+				    <td>@(item.Visibility ?? '-')</td>
+				    <td>@(item.WeatherPhenomenon is {Length: > 0} ? item.WeatherPhenomenon : '-')</td>
+			    </tr>
+		    }
+		    </tbody>
+	    </table>
+    }
+    else
+    {
+	    <div class="alert alert-warning" role="alert">
+		    No items found.
+	    </div>
+    }
+
+    @if (Model.Any())
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(ViewBag.Page <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Page - 1, year = ViewBag.Year, month = ViewBag.Month })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                @for (int i = ViewBag.Page - 5; i <= ViewBag.Page + 6 && i <= ViewBag.TotalPages; i++)
+                {
+                    if (i > 0)
+                    {
+                        <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, year = ViewBag.Year, month = ViewBag.Month })">@i</a>
+                        </li>
+                    }
+                }
+                <li class="page-item @(ViewBag.Page >= ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Page + 1, year = ViewBag.Year, month = ViewBag.Month })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
