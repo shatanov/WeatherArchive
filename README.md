@@ -1,3 +1,3 @@
 WeatherArchive
 
-Net7+PostgreSQL+NPOI
+Net7+PostgreSQL+Entity Framework+NPOI
